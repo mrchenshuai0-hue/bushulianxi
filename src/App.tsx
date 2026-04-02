@@ -74,11 +74,11 @@ export default function App() {
 
   // Helper to get absolute URL for images
   const getFullUrl = (url: string) => {
-    if (url.startsWith('http')) return url;
-    // Standard root-relative path is usually best for SPAs
-    const finalUrl = url.startsWith('/') ? url : `/${url}`;
-    console.log(`[DEBUG] Final URL for image: ${finalUrl}`);
-    return finalUrl;
+    if (url.startsWith('http') || url.startsWith('data:')) return url;
+    // If it's a resolved asset from Vite (starts with / or has a hash), return as is
+    if (url.startsWith('/') || url.includes('?')) return url;
+    // Otherwise, assume it needs a leading slash (relative to root/base)
+    return `/${url}`;
   };
 
   // Calculate scale to fit 4K content into current viewport
@@ -265,18 +265,18 @@ export default function App() {
               </div>
 
               {/* Menu Content */}
-              <div className="flex-1 overflow-y-auto custom-scrollbar p-2 space-y-1">
+              <div className="flex-1 overflow-y-auto custom-scrollbar p-4 flex flex-col justify-between min-h-0">
                 {CATEGORIES.map((category) => (
-                  <div key={category.id} className="flex items-stretch mb-3">
+                  <div key={category.id} className="flex items-stretch mb-6 last:mb-0 flex-1">
                     {/* Vertical Category Label */}
-                    <div className="bg-blue-500/50 backdrop-blur-md border-y border-l border-blue-300/30 flex items-center justify-center w-10 px-1 py-4 shadow-[-5px_0_15px_rgba(0,0,0,0.1)] rounded-l-md">
-                      <span className="text-white font-bold text-base leading-tight tracking-widest" style={{ writingMode: 'vertical-rl' }}>
+                    <div className="bg-blue-500/50 backdrop-blur-md border-y border-l border-blue-300/30 flex items-center justify-center w-12 px-2 py-8 shadow-[-5px_0_15px_rgba(0,0,0,0.1)] rounded-l-md">
+                      <span className="text-white font-bold text-lg leading-tight tracking-widest" style={{ writingMode: 'vertical-rl' }}>
                         {category.name}
                       </span>
                     </div>
                     
                     {/* Sub-items List */}
-                    <div className="flex-1 bg-blue-400/5 backdrop-blur-sm border border-blue-300/10 border-l-0 p-0.5 flex flex-col gap-0.5 rounded-r-md relative overflow-hidden">
+                    <div className="flex-1 bg-blue-400/5 backdrop-blur-sm border border-blue-300/10 border-l-0 p-1 flex flex-col gap-1 rounded-r-md relative overflow-hidden justify-center">
                       {/* Grid Background Pattern */}
                       <div className="absolute inset-0 opacity-5 pointer-events-none" 
                            style={{ backgroundImage: 'linear-gradient(rgba(59, 130, 246, 0.2) 1px, transparent 1px), linear-gradient(90deg, rgba(59, 130, 246, 0.2) 1px, transparent 1px)', backgroundSize: '12px 12px' }} />
@@ -289,13 +289,13 @@ export default function App() {
                           <button
                             key={item.id}
                             onClick={() => handleSwitch(globalIndex)}
-                            className={`relative px-3 py-2 text-left transition-all duration-300 group rounded-sm ${
+                            className={`relative px-4 py-3 text-left transition-all duration-300 group rounded-sm ${
                               isActive 
                                 ? 'bg-gradient-to-r from-cyan-400/90 to-blue-500/90 text-white shadow-[inset_0_0_15px_rgba(255,255,255,0.1)]' 
                                 : 'text-blue-100/60 hover:text-white hover:bg-blue-400/10'
                             }`}
                           >
-                            <span className={`text-sm font-medium tracking-wide ${isActive ? 'font-bold' : ''}`}>
+                            <span className={`text-base font-medium tracking-wide ${isActive ? 'font-bold' : ''}`}>
                               {item.title}
                             </span>
                             {isActive && (
