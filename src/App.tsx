@@ -11,41 +11,56 @@ import screen0 from './assets/screen_0.png';
 import screen1 from './assets/screen_1.png';
 import screen2 from './assets/screen_2.png';
 
-// Configuration for the display screens using provided screenshots
-const SCREENS = [
-  { 
-    id: '1', 
-    title: '崇维桔柚服务站', 
-    description: '集成桔柚生长气象服务专题、灾害指标监测及逐日天气预报，为桔柚产业提供全方位数智化支撑。',
-    url: screen0, 
-    fallback: 'https://picsum.photos/seed/citrus/3840/2160',
-    icon: <CloudSun size={20} /> 
+// Configuration for the display screens grouped by category as seen in the reference image
+const CATEGORIES = [
+  {
+    name: '农业',
+    id: 'agri',
+    items: [
+      { id: '1', title: '建阳桔柚', url: screen0, description: '集成桔柚生长气象服务专题、灾害指标监测及逐日天气预报。', icon: <CloudSun size={20} /> },
+      { id: '2', title: '建瓯玉米', url: screen1, description: '实时监控鲜食玉米生长环境，提供气象适宜性指标分析。', icon: <Thermometer size={20} /> },
+      { id: '3', title: '邵武黄精', url: 'https://picsum.photos/seed/huangjing/3840/2160', description: '中药材种植气象服务。', icon: <Wind size={20} /> },
+      { id: '4', title: '浦城水稻制种', url: 'https://picsum.photos/seed/rice/3840/2160', description: '水稻制种全过程气象保障。', icon: <Droplets size={20} /> },
+      { id: '5', title: '光泽稻花鱼', url: screen2, description: '结合稻花鱼养殖需求，提供农业气象灾害风险预警。', icon: <Droplets size={20} /> },
+      { id: '6', title: '光泽生态农场', url: 'https://picsum.photos/seed/farm/3840/2160', description: '生态农场综合气象监测。', icon: <Globe size={20} /> },
+    ]
   },
-  { 
-    id: '2', 
-    title: '建瓯鲜食玉米服务平台', 
-    description: '实时监控鲜食玉米生长环境，提供气象适宜性指标分析、主要气象灾害预警及农事活动建议。',
-    url: screen1, 
-    fallback: 'https://picsum.photos/seed/corn/3840/2160',
-    icon: <Thermometer size={20} /> 
+  {
+    name: '茶园',
+    id: 'tea',
+    items: [
+      { id: '7', title: '武夷学院智慧茶园', url: 'https://picsum.photos/seed/teagarden1/3840/2160', description: '智慧茶园气象服务系统。', icon: <CloudSun size={20} /> },
+      { id: '8', title: '武夷山倾上有机茶园', url: 'https://picsum.photos/seed/teagarden2/3840/2160', description: '有机茶园气象环境监测。', icon: <CloudSun size={20} /> },
+    ]
   },
-  { 
-    id: '3', 
-    title: '仁厚稻花鱼服务站', 
-    description: '结合稻花鱼养殖需求，提供7天逐日预报、农业气象灾害风险预警及实时信息风采展示。',
-    url: screen2, 
-    fallback: 'https://picsum.photos/seed/fish/3840/2160',
-    icon: <Droplets size={20} /> 
+  {
+    name: '渡运',
+    id: 'ferry',
+    items: [
+      { id: '9', title: '邵武卫闽镇渡运', url: 'https://picsum.photos/seed/ferry1/3840/2160', description: '渡口航运安全气象预警。', icon: <Wind size={20} /> },
+      { id: '10', title: '武夷山城村村渡运', url: 'https://picsum.photos/seed/ferry2/3840/2160', description: '村级渡口气象服务。', icon: <Wind size={20} /> },
+    ]
   },
-  { 
-    id: '4', 
-    title: '其他大屏', 
-    description: '南平市气象社会服务现代化数智核心，整合多维气象数据，赋能地方特色农业高质量发展。',
-    url: 'https://picsum.photos/seed/meteo-core/3840/2160', 
-    fallback: 'https://picsum.photos/seed/meteo-core/3840/2160',
-    icon: <Globe size={20} /> 
+  {
+    name: '旅游',
+    id: 'tour',
+    items: [
+      { id: '11', title: '建阳云谷旅游驿站', url: 'https://picsum.photos/seed/tour1/3840/2160', description: '旅游景区气象服务。', icon: <Globe size={20} /> },
+      { id: '12', title: '建阳考亭旅游驿站', url: 'https://picsum.photos/seed/tour2/3840/2160', description: '考亭书院文化旅游气象保障。', icon: <Globe size={20} /> },
+    ]
+  },
+  {
+    name: '生态',
+    id: 'eco',
+    items: [
+      { id: '13', title: '松溪生态驿站', url: 'https://picsum.photos/seed/eco1/3840/2160', description: '生态环境气象监测。', icon: <Droplets size={20} /> },
+      { id: '14', title: '延平宝珠村生态驿站', url: 'https://picsum.photos/seed/eco2/3840/2160', description: '宝珠村生态气象服务。', icon: <Droplets size={20} /> },
+    ]
   },
 ];
+
+// Flattened screens for carousel logic
+const ALL_SCREENS = CATEGORIES.flatMap(cat => cat.items.map(item => ({ ...item, category: cat.name })));
 
 const CAROUSEL_INTERVAL = 20000; // 20 seconds per screen for better reading
 
@@ -116,14 +131,14 @@ export default function App() {
     if (isMenuOpen || isTransitioning) return;
     
     const timer = setTimeout(() => {
-      handleSwitch((currentIndex + 1) % SCREENS.length);
+      handleSwitch((currentIndex + 1) % ALL_SCREENS.length);
     }, CAROUSEL_INTERVAL);
     
     return () => clearTimeout(timer);
   }, [currentIndex, isMenuOpen, isTransitioning, handleSwitch]);
 
   const handleImageError = (id: string) => {
-    const screen = SCREENS.find(s => s.id === id);
+    const screen = ALL_SCREENS.find(s => s.id === id);
     console.error(`[DEBUG] Image load failed for ID ${id}. URL: ${screen?.url}`);
     if (!useFallback[id]) {
       setUseFallback(prev => ({ ...prev, [id]: true }));
@@ -140,10 +155,10 @@ export default function App() {
     <div className="relative w-screen h-screen bg-[#000510] overflow-hidden font-sans select-none">
       {/* 4K Content Wrapper */}
       <div 
-        className="screen-container"
+        className={`screen-container shadow-[0_0_100px_rgba(0,0,0,0.5)] transition-all duration-700 ${isMenuOpen ? 'blur-md scale-[0.98] opacity-50' : ''}`}
         style={{ 
           transform: `translate(-50%, -50%) scale(${scale})`,
-          opacity: scale > 0 ? 1 : 0 
+          opacity: scale > 0 ? (isMenuOpen ? 0.5 : 1) : 0 
         }}
       >
         <AnimatePresence initial={false}>
@@ -155,12 +170,12 @@ export default function App() {
             transition={{ duration: 0.6, ease: [0.4, 0, 0.2, 1] }}
             className="absolute inset-0"
           >
-            {useFallback[SCREENS[currentIndex].id] && (
+            {useFallback[ALL_SCREENS[currentIndex].id] && (
               <div className="absolute top-4 left-4 z-[200] bg-red-600 text-white px-4 py-2 rounded-full text-sm font-bold animate-pulse shadow-lg">
                 正在使用备用演示图片 (资源加载失败)
               </div>
             )}
-            {loadError[SCREENS[currentIndex].id] ? (
+            {loadError[ALL_SCREENS[currentIndex].id] ? (
               <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-[#001a3d] via-[#000a1a] to-[#001a3d] text-blue-400">
                 {/* Animated Radar Background for Error State */}
                 <div className="absolute inset-0 opacity-20 pointer-events-none">
@@ -178,7 +193,7 @@ export default function App() {
                     图片未找到
                   </div>
                   <div className="text-4xl opacity-70 font-light tracking-widest mb-12">
-                    系统检测到资源文件缺失: <span className="text-blue-400 font-mono mx-4">{SCREENS[currentIndex].url}</span>
+                    系统检测到资源文件缺失: <span className="text-blue-400 font-mono mx-4">{ALL_SCREENS[currentIndex].url}</span>
                   </div>
                   <div className="bg-blue-500/10 border border-blue-500/30 p-8 rounded-2xl max-w-4xl text-center backdrop-blur-md">
                     <p className="text-2xl text-blue-200/80 leading-relaxed">
@@ -190,11 +205,11 @@ export default function App() {
               </div>
             ) : (
               <img
-                src={useFallback[SCREENS[currentIndex].id] ? SCREENS[currentIndex].fallback : getFullUrl(SCREENS[currentIndex].url)}
+                src={useFallback[ALL_SCREENS[currentIndex].id] ? (ALL_SCREENS[currentIndex] as any).fallback || `https://picsum.photos/seed/${ALL_SCREENS[currentIndex].id}/3840/2160` : getFullUrl(ALL_SCREENS[currentIndex].url)}
                 className="w-full h-full object-cover"
-                alt={SCREENS[currentIndex].title}
+                alt={ALL_SCREENS[currentIndex].title}
                 onLoad={handleImageLoad}
-                onError={() => handleImageError(SCREENS[currentIndex].id)}
+                onError={() => handleImageError(ALL_SCREENS[currentIndex].id)}
                 referrerPolicy="no-referrer"
               />
             )}
@@ -204,13 +219,9 @@ export default function App() {
 
       {/* High-end Navigation Entry (Vertical Handle on Right) */}
       <div 
-        className="absolute top-0 right-0 h-full w-2 z-[100] group cursor-pointer"
+        className="absolute top-0 right-0 h-full w-4 z-[100] group cursor-pointer"
         onMouseEnter={() => setIsMenuOpen(true)}
-      >
-        <div className="absolute top-1/2 right-0 -translate-y-1/2 w-1 h-32 bg-blue-500/30 rounded-l-full group-hover:w-3 group-hover:bg-blue-400 transition-all duration-500 flex items-center justify-center">
-          <ChevronRight size={16} className="text-white rotate-180 opacity-0 group-hover:opacity-100 transition-opacity" />
-        </div>
-      </div>
+      />
 
       {/* Progress Bar */}
       {!isMenuOpen && (
@@ -234,7 +245,7 @@ export default function App() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setIsMenuOpen(false)}
-              className="absolute inset-0 bg-white/5 backdrop-blur-sm z-[110]"
+              className="absolute inset-0 bg-black/20 backdrop-blur-sm z-[110]"
             />
             <motion.div
               initial={{ x: '100%' }}
@@ -242,71 +253,64 @@ export default function App() {
               exit={{ x: '100%' }}
               transition={{ type: 'spring', damping: 35, stiffness: 200 }}
               onMouseLeave={() => setIsMenuOpen(false)}
-              className="absolute top-0 right-0 w-[380px] h-full bg-[#000d1f]/95 backdrop-blur-2xl border-l border-blue-500/30 z-[120] p-8 flex flex-col shadow-[-20px_0_60px_rgba(0,100,255,0.2)] overflow-hidden"
+              className="absolute top-0 right-0 w-[320px] h-full bg-blue-900/10 backdrop-blur-xl border-l border-blue-500/20 z-[120] flex flex-col shadow-[-20px_0_60px_rgba(0,100,255,0.1)] overflow-hidden"
             >
-              {/* Tech Background Decorations */}
-              <div className="absolute inset-0 opacity-[0.1] pointer-events-none">
-                <div className="absolute inset-0" style={{ backgroundImage: 'linear-gradient(rgba(59, 130, 246, 0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(59, 130, 246, 0.1) 1px, transparent 1px)', backgroundSize: '20px 20px' }} />
-                <motion.div 
-                  animate={{ top: ['-10%', '110%'] }}
-                  transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
-                  className="absolute left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-blue-400 to-transparent shadow-[0_0_15px_rgba(59,130,246,0.8)]"
-                />
-              </div>
-              
-              {/* Menu Header */}
-              <div className="mb-10 relative z-10">
-                <div className="flex items-center gap-3 mb-2">
-                  <div className="w-1 h-6 bg-blue-500 shadow-[0_0_10px_rgba(59,130,246,0.8)]" />
-                  <h2 className="text-2xl font-bold text-white tracking-wider uppercase">系统导航</h2>
-                </div>
-                <p className="text-blue-400/50 text-[10px] font-mono tracking-[0.3em] uppercase pl-4">气象数据中心</p>
+              {/* Menu Header (Title Integrated) */}
+              <div className="relative w-full mb-4">
+                <div className="absolute inset-0 bg-gradient-to-r from-blue-600/90 to-blue-400/90 shadow-[0_5px_15px_rgba(0,0,0,0.2)]" 
+                     style={{ clipPath: 'polygon(15% 0%, 100% 0%, 100% 100%, 0% 100%)' }} />
+                <h1 className="relative px-8 py-5 text-2xl font-bold text-white tracking-[0.15em] italic text-right">
+                  南平气象服务站
+                </h1>
               </div>
 
-              {/* Menu Items */}
-              <div className="flex-1 space-y-4 overflow-y-auto pr-2 custom-scrollbar relative z-10">
-                {SCREENS.map((screen, index) => (
-                  <button
-                    key={screen.id}
-                    onClick={() => handleSwitch(index)}
-                    className={`w-full group relative flex items-center gap-4 p-4 rounded-xl transition-all duration-300 overflow-hidden border ${
-                      currentIndex === index 
-                        ? 'bg-blue-600/20 border-blue-400/60 shadow-[0_0_20px_rgba(59,130,246,0.2)]' 
-                        : 'bg-white/5 border-white/5 hover:bg-blue-500/10 hover:border-blue-500/30'
-                    }`}
-                  >
-                    {/* Corner Borders for Active Item */}
-                    {currentIndex === index && (
-                      <>
-                        <div className="absolute top-0 left-0 w-2 h-2 border-t border-l border-blue-400" />
-                        <div className="absolute top-0 right-0 w-2 h-2 border-t border-r border-blue-400" />
-                        <div className="absolute bottom-0 left-0 w-2 h-2 border-b border-l border-blue-400" />
-                        <div className="absolute bottom-0 right-0 w-2 h-2 border-b border-r border-blue-400" />
-                      </>
-                    )}
-
-                    <div className={`p-2.5 rounded-lg transition-all duration-300 ${currentIndex === index ? 'bg-blue-500 text-white' : 'bg-blue-900/40 text-blue-400 group-hover:text-blue-300'}`}>
-                      {React.cloneElement(screen.icon as React.ReactElement, { size: 18 })}
+              {/* Menu Content */}
+              <div className="flex-1 overflow-y-auto custom-scrollbar p-2 space-y-1">
+                {CATEGORIES.map((category) => (
+                  <div key={category.id} className="flex items-stretch mb-3">
+                    {/* Vertical Category Label */}
+                    <div className="bg-blue-500/50 backdrop-blur-md border-y border-l border-blue-300/30 flex items-center justify-center w-10 px-1 py-4 shadow-[-5px_0_15px_rgba(0,0,0,0.1)] rounded-l-md">
+                      <span className="text-white font-bold text-base leading-tight tracking-widest" style={{ writingMode: 'vertical-rl' }}>
+                        {category.name}
+                      </span>
                     </div>
                     
-                    <div className="flex flex-col items-start">
-                      <span className={`text-sm font-bold tracking-wide transition-colors duration-300 ${currentIndex === index ? 'text-white' : 'text-white/50 group-hover:text-white/80'}`}>
-                        {screen.title}
-                      </span>
-                      <span className="text-[9px] font-mono text-blue-400/40 uppercase tracking-tighter">终端 {screen.id.padStart(2, '0')}</span>
+                    {/* Sub-items List */}
+                    <div className="flex-1 bg-blue-400/5 backdrop-blur-sm border border-blue-300/10 border-l-0 p-0.5 flex flex-col gap-0.5 rounded-r-md relative overflow-hidden">
+                      {/* Grid Background Pattern */}
+                      <div className="absolute inset-0 opacity-5 pointer-events-none" 
+                           style={{ backgroundImage: 'linear-gradient(rgba(59, 130, 246, 0.2) 1px, transparent 1px), linear-gradient(90deg, rgba(59, 130, 246, 0.2) 1px, transparent 1px)', backgroundSize: '12px 12px' }} />
+                      
+                      {category.items.map((item) => {
+                        const globalIndex = ALL_SCREENS.findIndex(s => s.id === item.id);
+                        const isActive = currentIndex === globalIndex;
+                        
+                        return (
+                          <button
+                            key={item.id}
+                            onClick={() => handleSwitch(globalIndex)}
+                            className={`relative px-3 py-2 text-left transition-all duration-300 group rounded-sm ${
+                              isActive 
+                                ? 'bg-gradient-to-r from-cyan-400/90 to-blue-500/90 text-white shadow-[inset_0_0_15px_rgba(255,255,255,0.1)]' 
+                                : 'text-blue-100/60 hover:text-white hover:bg-blue-400/10'
+                            }`}
+                          >
+                            <span className={`text-sm font-medium tracking-wide ${isActive ? 'font-bold' : ''}`}>
+                              {item.title}
+                            </span>
+                            {isActive && (
+                              <motion.div 
+                                layoutId="active-glow"
+                                className="absolute inset-0 border border-cyan-300/40 rounded-sm pointer-events-none"
+                              />
+                            )}
+                          </button>
+                        );
+                      })}
                     </div>
-
-                    {currentIndex === index && (
-                      <motion.div 
-                        layoutId="active-indicator"
-                        className="ml-auto w-1.5 h-1.5 rounded-full bg-blue-400 shadow-[0_0_10px_rgba(96,165,250,1)]" 
-                      />
-                    )}
-                  </button>
+                  </div>
                 ))}
               </div>
-
-              {/* Menu Footer removed as requested */}
             </motion.div>
           </>
         )}
@@ -314,7 +318,7 @@ export default function App() {
 
       {/* Preload images to prevent loading flickers during transition */}
       <div className="hidden">
-        {SCREENS.map(screen => (
+        {ALL_SCREENS.map(screen => (
           <img 
             key={`preload-${screen.id}`} 
             src={getFullUrl(screen.url)} 
